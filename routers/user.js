@@ -5,9 +5,11 @@ import {
   deleteUser,
   getOneUser,
   loginUser,
-    createUser
+    createUser,
+  logoutUser,
 } from '../controllers/User/barrel.js';
 
+import authMiddleware from '../middleware/authmiddles.js';
 
 const Router = express.Router();
 
@@ -27,6 +29,8 @@ Router.get('/users/:id', getOneUser);
 Router.patch('/users/update/:id', updateUser);
 
 // Delete a user
-Router.delete('/users/:id',  deleteUser); // fixed inconsistency from `/user/:id` to `/users/:id`
+Router.delete('/users/:id',  deleteUser); 
+// Logout a user
+Router.post('/users/logout', authMiddleware, logoutUser);
 
 export default Router;
