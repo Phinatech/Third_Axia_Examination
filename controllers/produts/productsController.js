@@ -1,99 +1,101 @@
-import Product  from '../../models/productsSchema.js'
+// Correct import if you are using named export
+import Product from '../../models/productsSchema.js';
 
-
+// Create a new product
 export const createProduct = async (req, res) => {
-    const { name, price, color, size } = req.body 
-    
-    const user = req.user
+  const { name, price, color, size } = req.body;
+  const user = req.user;
 
-    if (!name || !price || !color || !size) {
-        res.status(400).json({ message: "Please provide all fields" })
-        return
-    }
-    try {
-            const newProduct = new Product({...req.body, userId: user._id})
-            await newProduct.save()
-            res.status(201).json({mess: 'New Product created successfully'})
-    } catch (error) {
-        res.status(500).json(error)
-    }
-}
+  if (!name || !price || !color || !size) {
+    return res.status(400).json({ message: "Please provide all fields" });
+  }
 
-// get all Product
-  export const getuserProducts = async (req, res) => {
-    const user = req.user
-    try {
-        const Products = await Product.find({ userId: user._id })
-        res.status(200).json(Products)
-    } catch (error) {
-        res.status(500).json(error)
-    }
+  try {
+    const newProduct = new Product({ ...req.body, userId: user._id });
+    await newProduct.save();
+    res.status(201).json({ message: 'New Product created successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
-}
+// Get all products created by logged-in user
+export const getUserProducts = async (req, res) => {
+  const user = req.user;
+  try {
+    const products = await Product.find({ userId: user._id });
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Get all products (public)
 export const getAllProducts = async (req, res) => {
-    try {
-        const Products = await Product.find()
-        res.status(200).json(Products)
-    } catch (error) {
-        res.status(500).json(error)
-    }
+  try {
+    const products = await Product.find();
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
-}
-//getByqueryParams
-
+// Get products by query params
 export const getByqueryParams = async (req, res) => {
-    const { name, price, year } = req.query
-    const filter = {}
+  const { name, price, year } = req.query;
+  const filter = {};
 
-    if (username) filter.filterusername = name
-    if (gmail) filter.gmail = price
-    if (gmail) filter.year = year
+  if (name) filter.name = name;
+  if (price) filter.price = price;
+  if (year) filter.year = year;
 
-    try {
-        const user = await Product.find(filter)
-        res.status(200).json(user)
-    } catch (error) {
-        res.status(500).json(error)
-    }
-}
+  try {
+    const products = await Product.find(filter);
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
-// edit user
+// Edit product by owner
 export const editProduct = async (req, res) => {
-    const { id } = req.params
-    const {name , price, color, size} = req.body
-    const reqId = req.user._id
+  const { id } = req.params;
+  const { name, price, color, size } = req.body;
+  const userId = req.user._id;
 
-        try {
-            const product = await Product.findOne({ _id: id, userId: reqId })
-            if (!product) {
-                res.status(400).json({ message: "Product not found" })
-                return
-            }
+  try {
+    const product = await Product.findOne({ _id: id, userId });
 
-            //first methord
-            product.name = name ?? product.name
-            product.price = price ?? product.price
-            product.color = color ?? product.color
-            product.size = size ?? product.size
-
-            await product.save()
-
-            res.status(200).json({mess: 'Product updated successfully'})
-        } catch (error) {
-            res.status(500).json(error)
-        }
+    if (!product) {
+      return res.status(404).json({ message: "Product not found or unauthorized" });
     }
 
+    product.name = name ?? product.name;
+    product.price = price ?? product.price;
+    product.color = color ?? product.color;
+    product.size = size ?? product.size;
 
- // delete user
- export const deleteProduct = async (req, res) => {
-    const { id } = req.params
-    
-    try {
-         await Product.findByIdAndDelete(id)
-        
-        res.status(200).json({mess: 'User deleted successfully'})
-    } catch (error) {
-        res.status(500).json(error)
+    await product.save();
+    res.status(200).json({ message: 'Product updated successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Delete a product
+export const deleteProduct = async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user._id;
+
+  try {
+    const product = await Product.findOneAndDelete({ _id: id, userId });
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found or unauthorized" });
     }
-}
+
+    res.status(200).json({ message: 'Product deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

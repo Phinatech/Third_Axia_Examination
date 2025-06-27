@@ -1,4 +1,4 @@
-import mongoose  from 'mongoose'
+import mongoose from 'mongoose';
 
 const productSchema = new mongoose.Schema({
     userId: {
@@ -20,12 +20,12 @@ const productSchema = new mongoose.Schema({
     size: {
         type: String,
         required: true
-    } ,  
+    },
     imgUrl: {
         type: String,
         required: true
-    }   
-}, { timestamps: true })
+    }
+}, { timestamps: true });
 
-const Product = mongoose.model("product", productSchema)
-module.exports = Product
+const Product = mongoose.model('Product', productSchema);
+export default Product;

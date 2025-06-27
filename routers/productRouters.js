@@ -8,7 +8,7 @@ import {
   getByqueryParams,
 } from '../controllers/produts/productsController.js';
 
-import authMiddleware from '../middlewares/authMiddleware.js';
+import authMiddleware from '../middleware/authmiddles.js';
 
 const productRouter = express.Router();
 
