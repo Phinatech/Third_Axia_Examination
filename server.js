@@ -26,7 +26,7 @@ app.use('/api', cartRouter);
 
 
 app.get('/', (req, res) => {
-    res.json({message: 'Welcome to Axia Backend class 💃🏼' });
+    res.json({message: 'Welcome to Axia Third Examination 💃🏼' });
 })
 
 
