@@ -8,7 +8,7 @@ export const createCartItem = async (req, res) => {
   try {
     const product = await Product.findById(incomingPId);
     if (!product) {
-      return res.status(400).json({ message: "Product not found" });
+      return res.status(400).json({ message: "The product can not be found" });
     }
 
     let cart = await Cart.findOne({ userId: user._id });
